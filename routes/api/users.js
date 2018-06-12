@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
+const keys = require("../../config/keys");
+const passport = require("passport");
 
 // Load User model
 const User = require("../../models/User");
@@ -66,12 +68,37 @@ router.post("/login", (req, res) => {
         // User Matched
         const payload = { id: user.id, name: user.name, avatar: user.avatar }; // Create JWT Payload.
         // Sign Token
-        jwt.sign();
+        jwt.sign(
+          payload,
+          keys.secretOrKey,
+          { expiresIn: 3600 },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: "Bearer " + token
+            });
+          }
+        );
       } else {
         return res.status(400).json({ password: "Password Incorrect" });
       }
     });
   });
 });
+
+// @route   GET api/users/current
+// @desc    Login User / Returning current user
+// @access  Private
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    });
+  }
+);
 
 module.exports = router;
