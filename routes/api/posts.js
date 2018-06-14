@@ -50,33 +50,6 @@ router.delete(
   }
 );
 
-// @route   POST api/posts/like/:id
-// @desc    Like a post
-// @access  Private
-router.post(
-  "/like/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    Post.findOne(req.param.id)
-      .then(post => {
-        console.log(post);
-        if (
-          post.likes.filter(like => like.user.toString() === req.user.id)
-            .length > 0
-        ) {
-          return res
-            .status(400)
-            .json({ alreadyliked: "User already liked this post" });
-        }
-
-        post.likes.unshift({ user: req.user.id });
-
-        post.save().then(post => res.json(post));
-      })
-      .catch(err => res.status(404).json({ postnotfound: "No Post Found" }));
-  }
-);
-
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private
@@ -96,6 +69,126 @@ router.post(
     });
 
     newPost.save().then(post => res.json(post));
+  }
+);
+
+// @route   POST api/posts/like/:id
+// @desc    Like a post
+// @access  Private
+router.post(
+  "/like/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.findById(req.params.id)
+      .then(post => {
+        if (
+          post.likes.filter(like => like.user.toString() === req.user.id)
+            .length > 0
+        ) {
+          return res
+            .status(400)
+            .json({ alreadyliked: "User already liked this post" });
+        }
+
+        post.likes.unshift({ user: req.user.id });
+
+        post.save().then(post => res.json(post));
+      })
+      .catch(err => res.status(404).json({ postnotfound: "No Post Found" }));
+  }
+);
+
+// @route   POST api/posts/unlike/:id
+// @desc    Unlike a post
+// @access  Private
+router.post(
+  "/unlike/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.findById(req.params.id)
+      .then(post => {
+        if (
+          post.likes.filter(like => like.user.toString() === req.user.id)
+            .length === 0
+        ) {
+          return res
+            .status(400)
+            .json({ notliked: "You have not yet liked this post" });
+        }
+
+        // Get remove index
+        let removeindex = post.likes
+          .map(item => item.user.toString())
+          .indexOf(req.user.id);
+
+        // Splice out of array
+        post.likes.splice(removeindex, 1);
+
+        // Save
+        post.save().then(post => res.json(post));
+      })
+      .catch(err => res.status(404).json({ postnotfound: "No Post Found" }));
+  }
+);
+
+// @route   POST api/posts/comment/:id
+// @desc    Add comment to a post
+// @access  Private
+router.post(
+  "/comment/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validatePostInput(req.body);
+
+    if (!isValid) {
+      return res.status(404).json(errors);
+    }
+
+    Post.findById(req.params.id)
+      .then(post => {
+        const newComment = {
+          text: req.body.text,
+          name: req.body.name,
+          avatar: req.body.avatar,
+          user: req.user.id
+        };
+
+        post.comments.unshift(newComment);
+
+        post.save().then(post => res.json(post));
+      })
+      .catch(err => res.status(404).json({ postnotfound: "No Post Found" }));
+  }
+);
+
+// @route   POST api/posts/comment/:id/:comment:id
+// @desc    Remove comment from post.
+// @access  Private
+router.post(
+  "/comment/:id/:comment_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.findById(req.params.id)
+      .then(post => {
+        if (
+          post.comments.filter(
+            comment => comment._id.toString() === req.params.comment_id
+          ).length === 0
+        ) {
+          return res
+            .status(404)
+            .json({ commentnotexits: "Comment does not exist" });
+        }
+
+        const removeindex = post.comments
+          .map(item => item._id.toString())
+          .indexOf(req.params.comment_id);
+
+        post.comments.splice(removeindex, 1);
+
+        post.save().then(post => res.json(post));
+      })
+      .catch(err => res.status(404).json({ postnotfound: "No Post Found" }));
   }
 );
 
