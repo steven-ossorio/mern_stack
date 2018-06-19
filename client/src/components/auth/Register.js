@@ -34,13 +34,6 @@ class Register extends Component {
     };
 
     this.props.registerUser(newUser);
-
-    // axios
-    //   .post("/api/users/register", newUser)
-    //   .then(res => {
-    //     console.log(res.data);
-    //   })
-    //   .catch(err => this.setState({ errors: err.response.data }));
   }
 
   render() {
@@ -136,7 +129,8 @@ Register.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  errors: state.errors
 });
 export default connect(
   mapStateToProps,
