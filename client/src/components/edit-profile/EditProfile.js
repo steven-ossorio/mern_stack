@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import TextFieldGroup from "../common/textFieldGroup";
 import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
@@ -87,7 +87,8 @@ class CreateProfile extends Component {
         twitter: profile.twitter,
         facebook: profile.facebook,
         linkedin: profile.linkedin,
-        youtube: profile.youtube
+        youtube: profile.youtube,
+        instagram: profile.instagram
       });
     }
   }
@@ -190,6 +191,7 @@ class CreateProfile extends Component {
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-aut0">
+              <Link to="/dashboard">Go Back</Link>
               <h1 className="display-4 text-center">Edit Profile</h1>
               <small className="d-block pb-2">*= required fields</small>
               <form onSubmit={this.onSubmit}>
