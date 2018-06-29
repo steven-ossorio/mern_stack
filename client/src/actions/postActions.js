@@ -59,6 +59,31 @@ export const deletePost = id => dispatch => {
     );
 };
 
+export const addLike = id => dispatch => {
+  console.log(id);
+  axios
+    .get(`/api/posts/like/${id}`)
+    .then(res => dispatch(getPosts()))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: {}
+      })
+    );
+};
+
+export const removeLike = id => dispatch => {
+  axios
+    .get(`/api/posts/unlike/${id}`)
+    .then(res => dispatch(getPosts()))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 export const setPostLoading = () => {
   return {
     type: POST_LOADING

@@ -27,7 +27,7 @@ class Posts extends Component {
           <div className="row">
             <div className="col-md-12">
               <PostForm />
-              <PostFeed />
+              {postContent}
             </div>
           </div>
         </div>
@@ -41,9 +41,9 @@ Posts.propTypes = {
   post: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => {
-  post: state.post;
-};
+const mapStateToProps = state => ({
+  post: state.post
+});
 
 export default connect(
   mapStateToProps,
