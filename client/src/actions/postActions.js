@@ -60,9 +60,8 @@ export const deletePost = id => dispatch => {
 };
 
 export const addLike = id => dispatch => {
-  console.log(id);
   axios
-    .get(`/api/posts/like/${id}`)
+    .post(`/api/posts/like/${id}`)
     .then(res => dispatch(getPosts()))
     .catch(err =>
       dispatch({
@@ -74,7 +73,7 @@ export const addLike = id => dispatch => {
 
 export const removeLike = id => dispatch => {
   axios
-    .get(`/api/posts/unlike/${id}`)
+    .post(`/api/posts/unlike/${id}`)
     .then(res => dispatch(getPosts()))
     .catch(err =>
       dispatch({
