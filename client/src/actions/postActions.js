@@ -4,6 +4,7 @@ import {
   GET_ERRORS,
   POST_LOADING,
   GET_POSTS,
+  GET_POST,
   DELETE_POST
 } from "./types";
 
@@ -42,6 +43,24 @@ export const getPosts = () => dispatch => {
     );
 };
 
+export const getPost = id => dispatch => {
+  dispatch(setPostLoading());
+  axios
+    .get(`/api/posts/${id}`)
+    .then(res =>
+      dispatch({
+        type: GET_POST,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_POST,
+        payload: null
+      })
+    );
+};
+
 export const deletePost = id => dispatch => {
   axios
     .get(`/api/posts/${id}`)
@@ -60,9 +79,8 @@ export const deletePost = id => dispatch => {
 };
 
 export const addLike = id => dispatch => {
-  console.log(id);
   axios
-    .get(`/api/posts/like/${id}`)
+    .post(`/api/posts/like/${id}`)
     .then(res => dispatch(getPosts()))
     .catch(err =>
       dispatch({
@@ -74,7 +92,7 @@ export const addLike = id => dispatch => {
 
 export const removeLike = id => dispatch => {
   axios
-    .get(`/api/posts/unlike/${id}`)
+    .post(`/api/posts/unlike/${id}`)
     .then(res => dispatch(getPosts()))
     .catch(err =>
       dispatch({
