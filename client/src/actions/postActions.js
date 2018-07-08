@@ -121,7 +121,7 @@ export const addComment = (postId, commentData) => dispatch => {
 
 export const deleteComment = (postId, commentId) => dispatch => {
   axios
-    .post(`/api/posts/comment/${postId}/${commentId}`)
+    .delete(`/api/posts/comment/${postId}/${commentId}`)
     .then(res =>
       dispatch({
         type: GET_POST,
