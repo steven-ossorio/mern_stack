@@ -65,7 +65,7 @@ export const getPost = id => dispatch => {
 
 export const deletePost = id => dispatch => {
   axios
-    .get(`/api/posts/${id}`)
+    .delete(`/api/posts/${id}`)
     .then(res =>
       dispatch({
         type: DELETE_POST,
